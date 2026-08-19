@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكتب المؤيد للمحاماة — خطة النمو الرقمي</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --navy:#0b1a2e; --navy2:#12263f; --gold:#c9a227; --gold2:#e8c766;
+    --blue:#2e86de; --ink:#eaf0f7; --muted:#96a8bf;
+    --red:#e35d5d; --amber:#e0a33a; --green:#3fbf7f;
+  }
+  html,body{height:100%}
+  body{
+    font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;
+    background:var(--navy); color:var(--ink);
+    overflow:hidden;
+  }
+  .deck{height:100vh;width:100vw;position:relative}
+  .slide{
+    position:absolute;inset:0;padding:34px 46px 62px;
+    display:flex;flex-direction:column;
+    opacity:0;pointer-events:none;transform:translateY(14px);
+    transition:opacity .35s ease, transform .35s ease;
+    overflow-y:auto;
+  }
+  .slide.active{opacity:1;pointer-events:auto;transform:none}
+  .slide::-webkit-scrollbar{width:8px}
+  .slide::-webkit-scrollbar-thumb{background:#24405f;border-radius:4px}
+
+  /* header */
+  .shead{display:flex;align-items:flex-end;justify-content:space-between;
+    border-bottom:1px solid #23384f;padding-bottom:12px;margin-bottom:20px;flex-shrink:0}
+  .stitle{font-size:27px;font-weight:700;letter-spacing:-.3px}
+  .stitle span{color:var(--gold)}
+  .ssub{font-size:13px;color:var(--muted);margin-top:4px}
+  .brand{font-size:12px;color:var(--muted);text-align:left;line-height:1.7;flex-shrink:0}
+  .brand b{color:var(--gold);display:block;font-size:13px}
+
+  /* generic */
+  h3.sec{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.5px;
+    margin:0 0 10px;display:flex;align-items:center;gap:8px}
+  h3.sec::after{content:'';flex:1;height:1px;background:#23384f}
+
+  /* KPI strip */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;flex-shrink:0}
+  .kpi{background:linear-gradient(160deg,#12263f,#0e1e33);border:1px solid #23384f;
+    border-radius:12px;padding:14px 16px}
+  .kpi .n{font-size:30px;font-weight:700;color:var(--gold2);line-height:1.1}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
+
+  /* two column */
+  .cols{display:grid;grid-template-columns:1fr 1.45fr;gap:22px;flex:1;min-height:0}
+  .card{background:#0e1e33;border:1px solid #23384f;border-radius:12px;padding:16px 18px}
+
+  ul.tick{list-style:none;display:flex;flex-direction:column;gap:9px}
+  ul.tick li{font-size:13.5px;line-height:1.6;padding-right:20px;position:relative;color:#cfdcea}
+  ul.tick li::before{content:'▸';position:absolute;right:0;top:0;color:var(--green);font-size:13px}
+
+  /* issues */
+  .issue{display:flex;gap:11px;padding:9px 0;border-bottom:1px dashed #1e344b}
+  .issue:last-child{border-bottom:0}
+  .sev{flex-shrink:0;width:52px;height:20px;border-radius:5px;font-size:10px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;margin-top:3px;letter-spacing:.3px}
+  .s-hi{background:rgba(227,93,93,.16);color:var(--red);border:1px solid rgba(227,93,93,.4)}
+  .s-md{background:rgba(224,163,58,.15);color:var(--amber);border:1px solid rgba(224,163,58,.4)}
+  .issue .txt{font-size:13px;line-height:1.6}
+  .issue .txt b{color:#fff;font-weight:600}
+  .issue .txt em{font-style:normal;color:var(--muted);font-size:12px;display:block;margin-top:2px}
+  code{background:#1a2f47;padding:1px 6px;border-radius:4px;font-size:11.5px;
+    color:var(--gold2);font-family:ui-monospace,monospace;direction:ltr;display:inline-block}
+
+  /* phases */
+  .phases{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;flex:1;min-height:0}
+  .phase{background:#0e1e33;border:1px solid #23384f;border-radius:12px;padding:0;overflow:hidden;
+    display:flex;flex-direction:column}
+  .phase .ph{padding:12px 16px;border-bottom:1px solid #23384f;background:#12263f}
+  .phase .ph .tag{font-size:10.5px;color:var(--navy);background:var(--gold);
+    padding:2px 9px;border-radius:20px;font-weight:700;display:inline-block}
+  .phase .ph h4{font-size:16px;margin-top:8px;font-weight:700}
+  .phase .ph p{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .phase .body{padding:13px 16px;display:flex;flex-direction:column;gap:9px;overflow-y:auto}
+  .task{font-size:12.5px;line-height:1.55;padding-right:17px;position:relative;color:#cfdcea}
+  .task::before{content:'';position:absolute;right:0;top:7px;width:7px;height:7px;
+    border-radius:50%;background:var(--blue)}
+  .task b{color:#fff;font-weight:600}
+
+  .rules{margin-top:16px;background:rgba(227,93,93,.07);border:1px solid rgba(227,93,93,.3);
+    border-radius:10px;padding:11px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex-shrink:0}
+  .rules .lbl{font-size:11.5px;font-weight:700;color:var(--red);flex-shrink:0}
+  .rules .r{font-size:12px;color:#cfdcea}
+
+  /* opportunities */
+  .opps{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;flex-shrink:0}
+  .opp{background:#0e1e33;border:1px solid #23384f;border-radius:12px;padding:15px 17px;
+    border-right:3px solid var(--gold)}
+  .opp .h{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+  .opp h4{font-size:15px;font-weight:700}
+  .opp .badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;
+    background:rgba(63,191,127,.14);color:var(--green);border:1px solid rgba(63,191,127,.35)}
+  .opp p{font-size:12.5px;line-height:1.65;color:#b8c8da}
+  .opp .why{font-size:11.5px;color:var(--gold2);margin-top:7px;padding-top:7px;
+    border-top:1px dashed #1e344b}
+
+  table.kpi-t{width:100%;border-collapse:collapse;margin-top:14px;font-size:12.5px}
+  table.kpi-t th{text-align:right;padding:8px 10px;color:var(--gold);font-weight:600;
+    border-bottom:1px solid #23384f;font-size:11.5px}
+  table.kpi-t td{padding:7px 10px;border-bottom:1px solid #16293e;color:#cfdcea}
+  table.kpi-t td:first-child{color:#fff;font-weight:600}
+
+  /* footer nav */
+  .nav{position:fixed;bottom:0;right:0;left:0;height:48px;background:#08131f;
+    border-top:1px solid #23384f;display:flex;align-items:center;
+    justify-content:space-between;padding:0 24px;z-index:20}
+  .dots{display:flex;gap:8px;align-items:center}
+  .dot{width:8px;height:8px;border-radius:50%;background:#2a4562;cursor:pointer;
+    transition:all .25s;border:0}
+  .dot.on{background:var(--gold);width:24px;border-radius:5px}
+  .nbtn{background:#16293e;border:1px solid #2a4562;color:var(--ink);
+    padding:6px 15px;border-radius:7px;cursor:pointer;font-size:12.5px;
+    font-family:inherit;transition:.2s}
+  .nbtn:hover{background:#1f3a55;border-color:var(--gold)}
+  .nbtn:disabled{opacity:.3;cursor:default}
+  .pgn{font-size:11.5px;color:var(--muted)}
+  @media(max-width:1100px){
+    .cols{grid-template-columns:1fr}
+    .phases,.opps,.kpis{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ================= SLIDE 1 ================= -->
+<section class="slide active">
+  <div class="shead">
+    <div>
+      <div class="stitle">أين نقف الآن؟ <span>تشخيص الوضع الحالي</span></div>
+      <div class="ssub">moayad-law.sa — فحص فني ومحتوى، أغسطس 2026</div>
+    </div>
+    <div class="brand"><b>مكتب المؤيد للمحاماة</b>ترخيص 451105 · سجل 7041552469</div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="n">~560</div><div class="l">مقالة منشورة عبر 5 خرائط موقع</div></div>
+    <div class="kpi"><div class="n">10</div><div class="l">صفحات ثابتة فقط — بلا صفحة خدمة واحدة</div></div>
+    <div class="kpi"><div class="n">4</div><div class="l">دومينات تحمل نفس اسم المكتب</div></div>
+    <div class="kpi"><div class="n">~326</div><div class="l">مقالة لم تُحدَّث منذ 2025</div></div>
+  </div>
+
+  <div class="cols">
+    <div class="card">
+      <h3 class="sec">نقاط القوة — أساس قابل للبناء عليه</h3>
+      <ul class="tick">
+        <li><b>ترخيص وسجل رسميان</b> ظاهران في كل صفحة — أقوى إشارة Trust في محتوى YMYL القانوني.</li>
+        <li><b>حجم محتوى ضخم</b> يغطي الجزائي والأحوال الشخصية والعمالي والتجاري.</li>
+        <li><b>بنية تقنية سليمة:</b> Rank Math، Sitemap منظّم، robots.txt صحيح، GSC و GTM مركّبان.</li>
+        <li><b>حضور اجتماعي</b> على 5 منصات بحساب موحّد <code>@mbi_lawfirm</code>.</li>
+        <li><b>مسار تحويل مباشر:</b> واتساب واتصال في كل صفحة.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3 class="sec">المشاكل التي تحجب النتائج</h3>
+
+      <div class="issue"><div class="sev s-hi">حرج</div><div class="txt">
+        <b>تفتيت البراند عبر 4 دومينات.</b>
+        <em>lawfirm-almoayad.com · almoayad-law.com · lawyer-in-jeddah.com (برقم مختلف) — كل واحد يسحب Authority ويشتّت الـ Entity في نظر جوجل وأدوات الـ AI.</em>
+      </div></div>
+
+      <div class="issue"><div class="sev s-hi">حرج</div><div class="txt">
+        <b>Keyword Cannibalization واسع.</b>
+        <em>عشرات المقالات بنفس النية: «أفضل محامي طلاق»، «محامي طلاق بالرياض»، «محامي متخصص في قضايا الطلاق» — تتنافس مع بعضها وتقسّم قوة الترتيب.</em>
+      </div></div>
+
+      <div class="issue"><div class="sev s-hi">حرج</div><div class="txt">
+        <b>رابط خارجي لموقع آخر + رقمان مختلفان.</b>
+        <em>صفحة «خدماتنا» تحوي رابطًا لـ tafahum-sa.com وزر تواصل برقم 0510010700 بينما الموقع كله 0560077098 → تسريب Link Equity وتضارب NAP يضرب الـ Local SEO.</em>
+      </div></div>
+
+      <div class="issue"><div class="sev s-hi">حرج</div><div class="txt">
+        <b>لا توجد صفحات خدمات حقيقية.</b>
+        <em>قائمة «خدماتنا» تشير إلى Category Pages للمدونة — لا صفحة تحويلية واحدة لـ «محامي جنائي» أو «قضايا تجارية».</em>
+      </div></div>
+
+      <div class="issue"><div class="sev s-md">متوسط</div><div class="txt">
+        <b>ضعف E-E-A-T رغم توفر مقوّماته.</b>
+        <em>المقالات منسوبة لـ «فريق التحرير القانوني» لا للمحامي المرخّص، وبانر «خصم 50٪» الدائم يضعف الثقة في خدمة قانونية.</em>
+      </div></div>
+
+      <div class="issue"><div class="sev s-md">متوسط</div><div class="txt">
+        <b>غياب تام عن نتائج الـ AI.</b>
+        <em>لا <code>llms.txt</code>، لا Schema منظمة (LegalService / Attorney / FAQPage) — لا وجود في AI Overviews أو ChatGPT أو Perplexity.</em>
+      </div></div>
+
+      <div class="issue"><div class="sev s-md">متوسط</div><div class="txt">
+        <b>بقايا WooCommerce وصفحات فارغة.</b>
+        <em><code>/checkout/</code> و <code>/service/</code> مفهرستان، ورابط Snapchat مكسور، وفيديو تلقائي في الهيدر يضغط على Core Web Vitals.</em>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SLIDE 2 ================= -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="stitle">ما سيتم عمله — <span>خطة تنفيذية في 90 يومًا</span></div>
+      <div class="ssub">من إيقاف النزيف إلى إعادة البناء ثم النمو</div>
+    </div>
+    <div class="brand"><b>المرحلة التنفيذية</b>أولوية حسب الأثر ÷ الجهد</div>
+  </div>
+
+  <div class="phases">
+    <div class="phase">
+      <div class="ph">
+        <span class="tag">اليوم 1 — 30</span>
+        <h4>إيقاف النزيف</h4>
+        <p>إصلاحات سريعة، أثر فوري، مخاطرة صفر</p>
+      </div>
+      <div class="body">
+        <div class="task"><b>توحيد الدومينات:</b> تحويل 301 من الدومينات الثلاثة إلى moayad-law.sa لتجميع الـ Authority في أصل واحد.</div>
+        <div class="task"><b>إزالة الرابط الخارجي</b> إلى tafahum-sa.com وإيقاف تسريب Link Equity.</div>
+        <div class="task"><b>توحيد الـ NAP:</b> رقم وعنوان وبريد واحد في كل صفحة وكل منصة.</div>
+        <div class="task"><b>تنظيف الفهرسة:</b> إزالة <code>/checkout/</code> و <code>/service/</code> وبقايا WooCommerce.</div>
+        <div class="task"><b>Google Business Profile</b> مُوثّق لفرع جدة مع صور وخدمات ومسار تقييمات.</div>
+        <div class="task"><b>إصلاح رابط Snapchat</b> المكسور وتوحيد بصمة <code>@mbi_lawfirm</code>.</div>
+        <div class="task"><b>ربط Conversion Tracking</b> على أزرار الواتساب والاتصال — بدون قياس لا توجد إدارة.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="ph">
+        <span class="tag">اليوم 31 — 60</span>
+        <h4>إعادة بناء المعمارية</h4>
+        <p>حل التداخل وبناء هيكل يخدم التحويل</p>
+      </div>
+      <div class="body">
+        <div class="task"><b>Content Audit شامل</b> للـ 560 مقالة: تصنيف كل صفحة إلى (إبقاء / دمج / تحديث / إعادة توجيه).</div>
+        <div class="task"><b>معالجة الـ Cannibalization:</b> دمج المجموعات المتشابهة في صفحة واحدة قوية مع 301 من الباقي — لا حذف نهائي.</div>
+        <div class="task"><b>بناء 8–12 صفحة خدمة</b> حقيقية: جنائي، مخدرات، غسل أموال، ابتزاز، أحوال شخصية، عمالي، تجاري، عقاري.</div>
+        <div class="task"><b>Internal Linking بنمط Hub &amp; Spoke:</b> صفحة الخدمة مركز، والمقالات تغذّيها.</div>
+        <div class="task"><b>Schema Markup كامل:</b> LegalService + Attorney + FAQPage + BreadcrumbList + Review.</div>
+        <div class="task"><b>نقل تأليف المحتوى</b> إلى المحامي المرخّص مع صفحة سيرة مهنية موثّقة.</div>
+        <div class="task"><b>تحسين Core Web Vitals:</b> استبدال الفيديو التلقائي، ضغط الصور، Lazy Loading.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="ph">
+        <span class="tag">اليوم 61 — 90</span>
+        <h4>النمو والانتشار</h4>
+        <p>توسّع في القنوات الجديدة</p>
+      </div>
+      <div class="body">
+        <div class="task"><b>Refresh لأعلى 50 صفحة</b> بحسب بيانات GSC: تحديث الأنظمة والمواعيد والأرقام الرسمية.</div>
+        <div class="task"><b>AEO / GEO:</b> إنشاء <code>llms.txt</code>، وإعادة صياغة المحتوى بنمط الإجابة أولًا ليكون قابلًا للاستخراج.</div>
+        <div class="task"><b>Local SEO متعدد المدن:</b> صفحات مدن حقيقية (جدة، الرياض، الدمام، مكة) بمحتوى ومحاكم ومواقع فعلية.</div>
+        <div class="task"><b>بناء Backlinks:</b> أدلة قانونية سعودية، مقابلات، تعليق قانوني على تحديثات الأنظمة.</div>
+        <div class="task"><b>محتوى الفيديو:</b> إعادة توظيف تيك توك ويوتيوب كمصدر إشارات براند وروابط.</div>
+        <div class="task"><b>Rank Tracking Dashboard</b> شهري: كلمات، ترتيب، ظهور في AI، عدد الاستشارات.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rules">
+    <span class="lbl">قواعد ملزمة أثناء التنفيذ:</span>
+    <span class="r">▪ لا يُغيَّر أي Slug قائم</span>
+    <span class="r">▪ لا تُحذف صفحة إلا بإثبات من Search Console</span>
+    <span class="r">▪ لا يُنشر رقم أو اقتباس نظامي بلا مصدر رسمي</span>
+    <span class="r">▪ لا رابط خارجي لمنافس</span>
+  </div>
+</section>
+
+<!-- ================= SLIDE 3 ================= -->
+<section class="slide">
+  <div class="shead">
+    <div>
+      <div class="stitle">فرص الانتشار <span>في السوق السعودي</span></div>
+      <div class="ssub">أين توجد مساحة فعلية للتقدم قبل أن يشغلها المنافسون</div>
+    </div>
+    <div class="brand"><b>الفرص والقياس</b>ما نستهدفه وكيف نتحقق منه</div>
+  </div>
+
+  <div class="opps">
+    <div class="opp">
+      <div class="h"><h4>١. البحث بالذكاء الاصطناعي (AEO / GEO)</h4><span class="badge">أعلى عائد</span></div>
+      <p>الباحث السعودي انتقل إلى سؤال ChatGPT و AI Overviews قبل فتح جوجل. المكاتب المنافسة لم تدخل هذا المجال بعد.</p>
+      <div class="why">التنفيذ: llms.txt + محتوى بنمط «الإجابة أولًا» + FAQ Schema + بيانات كيان موحّدة.</div>
+    </div>
+
+    <div class="opp">
+      <div class="h"><h4>٢. التخصص الجزائي كخندق تنافسي</h4><span class="badge">تمايز</span></div>
+      <p>المكتب متخصص فعليًا في المحاكم الجزائية — مجال نية عالية ومنافسة أقل بكثير من «أفضل محامي» العامة التي يتزاحم عليها الجميع.</p>
+      <div class="why">التنفيذ: التوقف عن مطاردة الكلمات العامة، والتعمّق في المخدرات والابتزاز وغسل الأموال والتزوير.</div>
+    </div>
+
+    <div class="opp">
+      <div class="h"><h4>٣. Local SEO لكل مدينة</h4><span class="badge">فجوة قائمة</span></div>
+      <p>المقر في جدة بينما معظم المحتوى يستهدف الرياض — تناقض يُضعف الإشارة المحلية ويحرم المكتب من نتائج الخرائط.</p>
+      <div class="why">التنفيذ: GBP موثّق + صفحة لكل مدينة بمحاكمها وإجراءاتها + سياسة تقييمات منتظمة.</div>
+    </div>
+
+    <div class="opp">
+      <div class="h"><h4>٤. قطاع الشركات (B2B)</h4><span class="badge">قيمة أعلى</span></div>
+      <p>الحوكمة والامتثال وتأسيس الشركات وصياغة العقود — قيمة العميل فيها أضعاف قضايا الأفراد، ومدفوعة بنمو الأعمال ضمن رؤية 2030.</p>
+      <div class="why">التنفيذ: صفحات خدمات شركات + دراسات حالة + محتوى تحديثات الأنظمة التجارية.</div>
+    </div>
+  </div>
+
+  <h3 class="sec" style="margin-top:18px">ما سنقيسه شهريًا</h3>
+  <table class="kpi-t">
+    <tr><th style="width:24%">المؤشر</th><th style="width:38%">الوضع الحالي</th><th>الهدف بعد 90 يومًا</th></tr>
+    <tr><td>الاستشارات الواردة</td><td>غير مقاسة — لا يوجد Conversion Tracking</td><td>قياس كامل لكل استشارة ومصدرها</td></tr>
+    <tr><td>صفحات الخدمات</td><td>صفر — روابط تشير إلى تصنيفات المدونة</td><td>8–12 صفحة خدمة تحويلية</td></tr>
+    <tr><td>وحدة البراند</td><td>4 دومينات متفرقة</td><td>دومين واحد يجمع كل الـ Authority</td></tr>
+    <tr><td>الظهور في نتائج AI</td><td>غير موجود</td><td>ظهور مُتتبَّع على الأسئلة القانونية الأساسية</td></tr>
+    <tr><td>حداثة المحتوى</td><td>~326 مقالة قديمة منذ 2025</td><td>أعلى 50 صفحة محدّثة ومراجَعة قانونيًا</td></tr>
+  </table>
+</section>
+
+</div>
+
+<div class="nav">
+  <button class="nbtn" id="prev">السابق ›</button>
+  <div class="dots" id="dots"></div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="pgn" id="pgn">1 / 3</span>
+    <button class="nbtn" id="next">‹ التالي</button>
+  </div>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  const dots=document.getElementById('dots');
+  let i=0;
+  slides.forEach((_,k)=>{
+    const b=document.createElement('button');
+    b.className='dot'+(k===0?' on':'');
+    b.onclick=()=>go(k);
+    dots.appendChild(b);
+  });
+  function go(k){
+    i=Math.max(0,Math.min(slides.length-1,k));
+    slides.forEach((s,n)=>s.classList.toggle('active',n===i));
+    [...dots.children].forEach((d,n)=>d.classList.toggle('on',n===i));
+    document.getElementById('pgn').textContent=(i+1)+' / '+slides.length;
+    document.getElementById('prev').disabled=(i===0);
+    document.getElementById('next').disabled=(i===slides.length-1);
+    slides[i].scrollTop=0;
+  }
+  document.getElementById('next').onclick=()=>go(i+1);
+  document.getElementById('prev').onclick=()=>go(i-1);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowLeft'||e.key===' '||e.key==='PageDown')go(i+1);
+    if(e.key==='ArrowRight'||e.key==='PageUp')go(i-1);
+  });
+  go(0);
+</script>
+</body>
+</html>
